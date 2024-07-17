@@ -9,7 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from .serializers import (Commentserializers,Userserializers,LikeVideserializers,
                           Courseserializers,Lessonserializers,Emailserializers)
-from .permissions import UserPermission,CastomPermission
+from .permissions import UserPermission,CastomPermission,Lessonpermission
 from .models import Comment,Course,Lesson,Teacher,LikeVideo
 
 class UserView(ModelViewSet):
@@ -28,7 +28,7 @@ class CommentView(ModelViewSet):
 class CourseView(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = Courseserializers
-    permission_classes = [CastomPermission]
+    permission_classes = [Userserializers]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
@@ -36,7 +36,7 @@ class CourseView(ModelViewSet):
 class LessonView(ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = Lessonserializers
-    permission_classes = [CastomPermission]
+    permission_classes = [Lessonpermission]
     filter_backends = [filters.SearchFilter]
     search_fields = ['title']
 
@@ -48,7 +48,7 @@ class EmailView(APIView):
         serializer = Emailserializers(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        users = User.objects.all()
+        users = Teacher.objects.all()
         email_users=[]
 
         for user in users:

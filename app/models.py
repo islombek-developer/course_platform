@@ -31,8 +31,8 @@ class Lesson(models.Model):
     title = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    video = models.FileField(upload_to='media/', validators=[
-        FileExtensionValidator(allowed_extensions=['mp4', 'mp3', 'AVI', 'WMV', 'jpg', 'png'])
+    video = models.FileField(upload_to='video/', validators=[
+        FileExtensionValidator(allowed_extensions=['mp4', 'mp3', 'AVI', 'WMV'])
     ])
 
     def __str__(self) -> str:

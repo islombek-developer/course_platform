@@ -1,13 +1,27 @@
 from django.contrib import admin
 from .models import Comment, Course, Lesson, LikeVideo, Teacher, Program
 
+class CommentInline(admin.StackedInline):
+    model=Comment
+    extra=0
+
+class LikeInline(admin.StackedInline):
+    model=LikeVideo
+    extra=1
+
+
 @admin.register(Lesson)
 class AdminLesson(admin.ModelAdmin):
-    list_display = ('title', 'created', 'course')
+    list_display = ('title', 'video', 'course','created')
     list_display_links = ('title',)
     list_editable = ('course',)
     list_filter = ('course',)
     search_fields = ('title',)
+    inlines = [
+        CommentInline,
+        LikeInline
+    ]
+
 
 @admin.register(Program)
 class AdminProgram(admin.ModelAdmin):
@@ -28,4 +42,4 @@ class AdminCourse(admin.ModelAdmin):
     list_display_links = ('price',)
     search_fields = ('program',)
 
-admin.site.register(LikeVideo)
+

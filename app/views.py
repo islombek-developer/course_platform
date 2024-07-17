@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.mail import send_mail
 
-from rest_framework import generics, filters
+from rest_framework import generics, filters,permissions
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -9,13 +9,13 @@ from rest_framework.viewsets import ModelViewSet
 
 from .serializers import (Commentserializers,Userserializers,LikeVideserializers,
                           Courseserializers,Lessonserializers,Emailserializers)
-from .permissions import UserPermission,CastomPermission,Lessonpermission
-from .models import Comment,Course,Lesson,Teacher,LikeVideo
+from .permissions import CoursePermission,CastomPermission
+from .models import Comment,Course,Lesson,Teacher,LikeVideo,User
 
 class UserView(ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = Userserializers
-    permission_classes = [UserPermission]
+    permission_classes = [CastomPermission]
     filter_backends = [filters.SearchFilter]
     search_fields = ['username', 'email']
 
@@ -23,12 +23,12 @@ class UserView(ModelViewSet):
 class CommentView(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = Commentserializers
-    permission_classes = [CastomPermission]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class CourseView(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = Courseserializers
-    permission_classes = [Userserializers]
+    permission_classes = [CoursePermission]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
@@ -36,7 +36,7 @@ class CourseView(ModelViewSet):
 class LessonView(ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = Lessonserializers
-    permission_classes = [Lessonpermission]
+    permission_classes = [CastomPermission]
     filter_backends = [filters.SearchFilter]
     search_fields = ['title']
 
@@ -48,7 +48,7 @@ class EmailView(APIView):
         serializer = Emailserializers(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        users = Teacher.objects.all()
+        users = User.objects.all()
         email_users=[]
 
         for user in users:
